@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a13">
+  <meta name="description" content="SunnoHub от WeLL — будущий голосовой помощник Суббота для Windows. Узнай о бете и попробуй интерактивную демонстрацию.">
+  <title>SunnoHub — новый способ управлять своим днём | WeLL</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050a13;
+      --surface: #0a1423;
+      --surface-2: #0c1b2c;
+      --line: rgba(138, 207, 255, .14);
+      --text: #f0f8ff;
+      --muted: #92a9bb;
+      --cyan: #51d9ff;
+      --blue: #468aff;
+      --green: #8cf0c5;
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 52% 38% at 85% 4%, rgba(27, 112, 215, .17), transparent 80%),
+        radial-gradient(ellipse 42% 30% at 5% 45%, rgba(18, 115, 170, .09), transparent 80%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    ::selection { background: rgba(81, 217, 255, .35); color: white; }
+    :focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+
+    .skip-link {
+      position: absolute;
+      top: -70px;
+      left: 16px;
+      z-index: 100;
+      padding: 10px 16px;
+      background: var(--cyan);
+      color: #06111d;
+      border-radius: 10px;
+    }
+    .skip-link:focus { top: 12px; }
+
+    .container { width: min(1180px, calc(100% - 48px)); margin: auto; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(138, 207, 255, .09);
+      background: rgba(5, 10, 19, .77);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .header-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 850; font-size: 22px; letter-spacing: -.06em; }
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: #06131f;
+      font-size: 23px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #a0f0ff, #3d9aff);
+      box-shadow: 0 0 24px rgba(81, 217, 255, .28);
+    }
+    .brand-product { color: var(--cyan); }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: #a7bbcc; font-size: 14px; }
+    .nav-links a:hover, .footer-links a:hover { color: var(--cyan); }
+    .header-link {
+      padding: 10px 16px;
+      border: 1px solid rgba(81, 217, 255, .35);
+      border-radius: 11px;
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 750;
+      transition: background .2s, transform .2s;
+    }
+    .header-link:hover { background: rgba(81, 217, 255, .11); transform: translateY(-2px); }
+
+    .hero {
+      position: relative;
+      padding: 116px 0 110px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(97, 178, 255, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(97, 178, 255, .045) 1px, transparent 1px);
+      background-size: 62px 62px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.03fr .97fr;
+      align-items: center;
+      gap: 40px;
+    }
+    .eyebrow, .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+    }
+    .eyebrow {
+      padding: 9px 13px;
+      border: 1px solid rgba(81, 217, 255, .22);
+      border-radius: 100px;
+      background: rgba(53, 161, 221, .07);
+    }
+    .eyebrow-dot, .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 14px var(--cyan);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      margin: 25px 0 22px;
+      max-width: 720px;
+      font-size: clamp(52px, 6.6vw, 96px);
+      line-height: .99;
+      letter-spacing: -.075em;
+    }
+    .gradient-text {
+      background: linear-gradient(100deg, #e8fcff 4%, #78dfff 40%, #488cff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-description {
+      max-width: 540px;
+      color: #a9bfd0;
+      font-size: clamp(16px, 1.7vw, 19px);
+      line-height: 1.75;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 31px 0 36px; }
+    .button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      font-weight: 760;
+      font-size: 14px;
+      transition: transform .2s, box-shadow .2s, border-color .2s, background .2s;
+    }
+    .button:hover { transform: translateY(-3px); }
+    .button-primary {
+      color: #04111c;
+      background: linear-gradient(110deg, #82eaff, #61b4ff);
+      box-shadow: 0 10px 35px rgba(49, 163, 242, .22);
+    }
+    .button-primary:hover { box-shadow: 0 12px 40px rgba(49, 163, 242, .38); }
+    .button-secondary {
+      color: #e8f7ff;
+      border-color: rgba(155, 212, 255, .22);
+      background: rgba(255, 255, 255, .035);
+    }
+    .button-secondary:hover { border-color: var(--cyan); background: rgba(81, 217, 255, .08); }
+    .hero-note { display: flex; align-items: center; gap: 10px; color: #8097aa; font-size: 13px; }
+    .hero-note::before { content: ""; width: 23px; height: 1px; background: var(--cyan); }
+
+    .hero-visual { position: relative; min-height: 560px; display: grid; place-items: center; }
+    .visual-glow {
+      position: absolute;
+      width: 95%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(26, 153, 247, .27), rgba(14, 88, 180, .09) 42%, transparent 68%);
+      filter: blur(22px);
+      animation: breathe 5s ease-in-out infinite;
+    }
+    .orbit {
+      position: absolute;
+      width: min(92%, 500px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(82, 182, 255, .15);
+      border-radius: 50%;
+      animation: rotate 32s linear infinite;
+    }
+    .orbit::after {
+      content: "";
+      position: absolute;
+      top: 15%;
+      left: 14%;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 22px var(--cyan);
+    }
+    .orbit-inner {
+      width: min(72%, 390px);
+      border-style: dashed;
+      border-color: rgba(82, 182, 255, .19);
+      animation-direction: reverse;
+      animation-duration: 40s;
+    }
+    .orb {
+      position: relative;
+      width: min(62%, 332px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(190, 240, 255, .46);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 31% 23%, rgba(167, 240, 255, .85), transparent 18%),
+        radial-gradient(circle at 72% 75%, rgba(8, 43, 155, .9), transparent 43%),
+        radial-gradient(circle at 38% 38%, #49cfff, #1356b0 48%, #081a50 77%, #051129);
+      box-shadow:
+        inset -24px -25px 55px rgba(1, 8, 36, .75),
+        inset 9px 10px 35px rgba(200, 247, 255, .4),
+        0 0 40px rgba(32, 152, 255, .45),
+        0 0 120px rgba(17, 98, 222, .23);
+      animation: float 6s ease-in-out infinite;
+    }
+    .orb::before, .orb::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border: 1px solid rgba(190, 242, 255, .18);
+      border-radius: 50%;
+      transform: rotate(-28deg) scaleY(.34);
+    }
+    .orb::after { transform: rotate(54deg) scaleY(.56); }
+    .orb-core {
+      width: 38%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, #d8fbff, #68daff 23%, rgba(56, 171, 255, .14) 70%, transparent);
+      filter: blur(5px);
+      opacity: .82;
+    }
+    .float-card {
+      position: absolute;
+      z-index: 2;
+      padding: 13px 16px;
+      border: 1px solid rgba(141, 208, 255, .24);
+      border-radius: 14px;
+      background: rgba(10, 25, 46, .8);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .25);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      animation: float 5s ease-in-out infinite;
+    }
+    .float-card small { display: block; color: #8faec1; font-size: 11px; }
+    .float-card strong { display: block; font-size: 13px; }
+    .float-card-one { top: 14%; right: 0; }
+    .float-card-two { left: -1%; bottom: 19%; animation-delay: -2s; }
+    .float-card-three { right: 3%; bottom: 9%; animation-delay: -3.5s; }
+    .float-icon { color: var(--cyan); margin-right: 5px; }
+
+    .strip {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(10, 22, 37, .62);
+    }
+    .strip-inner {
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px 28px;
+      padding: 20px 0;
+    }
+    .strip-label { color: #849bac; font-size: 12px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+    .strip-items { display: flex; flex-wrap: wrap; gap: 18px 34px; color: #c0d5e4; font-size: 14px; font-weight: 650; }
+    .strip-items span::before { content: "✦"; margin-right: 10px; color: var(--cyan); }
+
+    section.content-section { padding: 115px 0; }
+    .section-heading { max-width: 690px; margin-bottom: 42px; }
+    h2 { margin: 15px 0 15px; font-size: clamp(35px, 4.4vw, 58px); line-height: 1.09; letter-spacing: -.055em; }
+    .section-heading p, .section-copy { color: var(--muted); font-size: 16px; line-height: 1.75; }
+    .section-heading p { margin-bottom: 0; }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature-card {
+      position: relative;
+      min-height: 252px;
+      padding: 29px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(150deg, rgba(17, 40, 67, .9), rgba(8, 18, 32, .94));
+      overflow: hidden;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(81, 217, 255, .43);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .2);
+    }
+    .feature-card::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      top: -110px;
+      right: -85px;
+      border-radius: 50%;
+      background: rgba(47, 155, 255, .12);
+      filter: blur(18px);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 28px;
+      border: 1px solid rgba(81, 217, 255, .23);
+      border-radius: 14px;
+      background: rgba(81, 217, 255, .1);
+      color: var(--cyan);
+      font-size: 23px;
+    }
+    .feature-card h3 { margin-bottom: 9px; font-size: 19px; letter-spacing: -.025em; }
+    .feature-card p { margin-bottom: 0; color: #9db1c2; font-size: 14px; line-height: 1.7; }
+
+    .demo-section {
+      position: relative;
+      border-top: 1px solid rgba(138, 207, 255, .09);
+      border-bottom: 1px solid rgba(138, 207, 255, .09);
+      background: linear-gradient(180deg, rgba(11, 29, 50, .56), rgba(6, 15, 28, .68));
+    }
+    .demo-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 60px; align-items: center; }
+    .demo-info h2 { margin-bottom: 18px; }
+    .demo-info p { color: var(--muted); line-height: 1.75; }
+    .demo-points { display: grid; gap: 14px; margin-top: 28px; }
+    .demo-points span { color: #c7d8e5; font-size: 14px; }
+    .demo-points span::before { content: "✓"; margin-right: 11px; color: var(--cyan); }
+
+    .console {
+      border: 1px solid rgba(111, 195, 255, .26);
+      border-radius: 22px;
+      background: #081321;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .35), 0 0 70px rgba(33, 133, 246, .08);
+      overflow: hidden;
+    }
+    .console-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+      color: #afc6d7;
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .console-title { display: flex; align-items: center; gap: 10px; }
+    .window-dots { display: flex; gap: 5px; }
+    .window-dots i { width: 7px; height: 7px; border-radius: 50%; background: #42617c; }
+    .window-dots i:first-child { background: #58d7fb; }
+    .console-body { padding: 24px; }
+    .console-assistant { display: flex; align-items: center; gap: 15px; margin-bottom: 23px; }
+    .mini-orb {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 25%, #dcfbff, #4bc7ff 30%, #1354ae 70%, #0a1b43);
+      box-shadow: 0 0 24px rgba(58, 173, 255, .5);
+      animation: breathe 3s ease-in-out infinite;
+    }
+    .console-assistant strong { display: block; font-size: 15px; }
+    .console-assistant small { color: #7e9aaf; font-size: 12px; }
+    .chat-log {
+      min-height: 166px;
+      max-height: 235px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 4px 3px 14px;
+      scrollbar-color: #315373 transparent;
+    }
+    .message {
+      max-width: 92%;
+      padding: 11px 14px;
+      border: 1px solid rgba(136, 204, 255, .13);
+      border-radius: 14px 14px 14px 3px;
+      background: #10243a;
+      color: #d7eaf6;
+      font-size: 13px;
+      line-height: 1.55;
+      animation: message-in .25s ease-out both;
+    }
+    .message.user {
+      align-self: flex-end;
+      border-color: rgba(81, 217, 255, .22);
+      border-radius: 14px 14px 3px 14px;
+      background: #123c59;
+      color: white;
+    }
+    .message strong { color: var(--cyan); }
+    .apps-label { margin: 15px 0 10px; color: #7997ad; font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .12em; }
+    .apps { display: flex; flex-wrap: wrap; gap: 8px; }
+    .app-pill {
+      padding: 7px 10px;
+      border: 1px solid rgba(122, 157, 182, .17);
+      border-radius: 9px;
+      color: #778fa3;
+      background: rgba(255, 255, 255, .025);
+      font-size: 11px;
+      transition: color .25s, border-color .25s, background .25s, box-shadow .25s;
+    }
+    .app-pill.active {
+      border-color: rgba(81, 217, 255, .42);
+      color: #bdefff;
+      background: rgba(81, 217, 255, .1);
+      box-shadow: 0 0 16px rgba(81, 217, 255, .08);
+    }
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 13px; }
+    .quick-actions button {
+      padding: 8px 11px;
+      border: 1px solid rgba(138, 207, 255, .2);
+      border-radius: 9px;
+      background: transparent;
+      color: #b7d1e0;
+      font-size: 11px;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .quick-actions button:hover { border-color: var(--cyan); color: white; background: rgba(81, 217, 255, .1); }
+    .command-form { display: flex; gap: 8px; }
+    .command-form input {
+      min-width: 0;
+      width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid rgba(138, 207, 255, .24);
+      border-radius: 10px;
+      outline: none;
+      background: #0b1d30;
+      color: white;
+      font-size: 13px;
+    }
+    .command-form input::placeholder { color: #7491a5; }
+    .command-form input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(81, 217, 255, .1); }
+    .icon-button, .send-button {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+    }
+    .icon-button { border: 1px solid rgba(138, 207, 255, .24); background: #0b1d30; color: var(--cyan); }
+    .icon-button:hover, .icon-button.listening { background: rgba(81, 217, 255, .16); }
+    .icon-button.listening { box-shadow: 0 0 0 4px rgba(81, 217, 255, .12); animation: breathe 1s infinite; }
+    .send-button { border: 0; background: var(--cyan); color: #04111d; }
+    .send-button:hover { background: #a0efff; }
+    .demo-disclaimer { margin: 12px 0 0; color: #7894a7; font-size: 11px; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .step { padding: 4px 20px 0 0; }
+    .step-number { color: var(--cyan); font-size: 13px; font-weight: 800; letter-spacing: .12em; }
+    .step-line { height: 1px; margin: 17px 0 23px; background: linear-gradient(90deg, var(--cyan), rgba(81, 217, 255, .1)); }
+    .step h3 { margin-bottom: 9px; font-size: 21px; letter-spacing: -.025em; }
+    .step p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    .beta-wrap {
+      position: relative;
+      padding: 66px;
+      border: 1px solid rgba(81, 217, 255, .27);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 88% 50%, rgba(37, 147, 255, .28), transparent 37%),
+        linear-gradient(120deg, #0c2741, #0a182a 70%);
+      overflow: hidden;
+    }
+    .beta-wrap::after {
+      content: "";
+      position: absolute;
+      right: -95px;
+      top: -120px;
+      width: 410px;
+      height: 410px;
+      border: 1px solid rgba(126, 218, 255, .22);
+      border-radius: 50%;
+      box-shadow: 0 0 0 50px rgba(126, 218, 255, .035), 0 0 0 105px rgba(126, 218, 255, .025);
+      pointer-events: none;
+    }
+    .beta-content { position: relative; z-index: 1; max-width: 650px; }
+    .beta-content h2 { margin-bottom: 17px; }
+    .beta-content p { color: #b0c7d8; line-height: 1.75; }
+    .beta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px 13px;
+      border: 1px solid rgba(81, 217, 255, .25);
+      border-radius: 10px;
+      color: #c8f3ff;
+      background: rgba(81, 217, 255, .08);
+      font-size: 13px;
+    }
+
+    .faq { max-width: 800px; }
+    details {
+      border-bottom: 1px solid var(--line);
+      padding: 21px 0;
+    }
+    details:first-of-type { border-top: 1px solid var(--line); }
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--cyan); font-size: 25px; font-weight: 400; line-height: 1; }
+    details[open] summary::after { content: "−"; }
+    details p { margin: 13px 30px 0 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
+
+    footer { padding: 30px 0; border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .footer-brand { font-size: 17px; font-weight: 800; letter-spacing: -.04em; }
+    .footer-brand span { color: var(--cyan); }
+    .footer-small { color: #7790a3; font-size: 12px; }
+    .footer-links { display: flex; gap: 20px; color: #9fb6c6; font-size: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-13px); } }
+    @keyframes breathe { 0%, 100% { opacity: .78; transform: scale(1); } 50% { opacity: 1; transform: scale(1.07); } }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @keyframes message-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 960px) {
+      .hero { padding: 85px 0; }
+      .hero-inner { gap: 10px; }
+      .hero-visual { min-height: 470px; }
+      .float-card-one { right: -2%; }
+      .demo-layout { gap: 30px; }
+    }
+    @media (max-width: 760px) {
+      .container { width: min(100% - 36px, 560px); }
+      .header-inner { min-height: 66px; }
+      .brand { font-size: 19px; }
+      .nav-links { display: none; }
+      .header-link { font-size: 12px; }
+      .hero { padding: 76px 0 55px; }
+      .hero-inner, .demo-layout { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 410px; margin-top: 10px; }
+      .float-card-one { right: 0; top: 9%; }
+      .float-card-two { left: 0; bottom: 13%; }
+      .float-card-three { right: 0; bottom: 4%; }
+      section.content-section { padding: 80px 0; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .demo-info { max-width: 570px; }
+      .steps { gap: 12px; }
+      .beta-wrap { padding: 45px 30px; }
+    }
+    @media (max-width: 520px) {
+      h1 { font-size: clamp(48px, 13vw, 68px); }
+      .hero-description { font-size: 16px; }
+      .hero-visual { min-height: 345px; }
+      .float-card { padding: 9px 11px; }
+      .float-card strong { font-size: 11px; }
+      .float-card small { font-size: 10px; }
+      .feature-grid, .steps { grid-template-columns: 1fr; }
+      .feature-card { min-height: 210px; }
+      .feature-icon { margin-bottom: 20px; }
+      .step { padding-bottom: 6px; }
+      .console-body { padding: 17px; }
+      .console-top { padding: 14px 16px; }
+      .beta-wrap { padding: 38px 23px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="WeLL SunnoHub — на главную">
+        <span class="brand-mark" aria-hidden="true">W</span>
+        <span>WeLL<span class="brand-product">.</span></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Навигация">
+        <a href="#features">Возможности</a>
+        <a href="#demo">Демонстрация</a>
+        <a href="#how">Как это работает</a>
+        <a href="#faq">Вопросы</a>
+      </nav>
+
+      <a class="header-link" href="#beta">Скоро бета ↗</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="eyebrow-dot"></span> Новый продукт WeLL · скоро бета</span>
+          <h1 id="hero-title">Знакомься.<br><span class="gradient-text">Это SunnoHub.</span></h1>
+          <p class="hero-description">
+            Твой будущий голосовой помощник для Windows. Скажи «Суббота, включи игровой режим» —
+            и нужные приложения окажутся под рукой. Меньше кликов. Больше времени на важное.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#demo">Попробовать демо <span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="#features">Узнать больше <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-note">Создаём новый способ взаимодействия с компьютером</div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-glow"></div>
+          <div class="orbit"></div>
+          <div class="orbit orbit-inner"></div>
+          <div class="orb"><div class="orb-core"></div></div>
+          <div class="float-card float-card-one">
+            <small>СУББОТА СЛУШАЕТ</small>
+            <strong><span class="float-icon">◉</span> «Включи игровой режим»</strong>
+          </div>
+          <div class="float-card float-card-two">
+            <small>СЦЕНАРИЙ</small>
+            <strong><span class="float-icon">✦</span> Всё готово к игре</strong>
+          </div>
+          <div class="float-card float-card-three">
+            <small>ПРИЛОЖЕНИЯ</small>
+            <strong>Steam · Музыка · Discord</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="strip" aria-label="Ключевые особенности">
+      <div class="container strip-inner">
+        <span class="strip-label">Одна фраза — много возможностей</span>
+        <div class="strip-items">
+          <span>Голосовые команды</span>
+          <span>Сценарии</span>
+          <span>Для Windows</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-kicker">01 / Возможности</span>
+          <h2 id="features-title">Компьютер понимает<br><span class="gradient-text">с полуслова.</span></h2>
+          <p>SunnoHub задуман как пространство, где привычные действия становятся проще. А Суббота помогает перейти от слов к делу.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">◉</div>
+            <h3>Скажи, что нужно</h3>
+            <p>Вместо поиска ярлыка попробуй сказать: «Суббота, включи Стим».</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">✧</div>
+            <h3>Запускай сценарии</h3>
+            <p>Одна команда может объединить несколько действий — например, подготовить всё для игры.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">▣</div>
+            <h3>Сосредоточься на своём</h3>
+            <p>Меньше переключений и рутины. Больше внимания игре, общению или работе.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">♫</div>
+            <h3>Твоя атмосфера</h3>
+            <p>Музыка и любимые приложения могут стать частью одного сценария.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">⌘</div>
+            <h3>Для твоего Windows</h3>
+            <p>SunnoHub создаётся с идеей удобного взаимодействия с приложениями на ПК.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">↗</div>
+            <h3>Это только начало</h3>
+            <p>Сначала бета: будем развивать продукт, улучшать сценарии и добавлять новые возможности.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section demo-section" id="demo" aria-labelledby="demo-title">
+      <div class="container demo-layout">
+        <div class="demo-info reveal">
+          <span class="section-kicker">02 / Интерактивное демо</span>
+          <h2 id="demo-title">Попробуй сказать<br><span class="gradient-text">Субботе.</span></h2>
+          <p>Нажми на готовую команду или введи свою. Здесь можно увидеть, как могли бы выглядеть ответы помощника и сценарии запуска.</p>
+          <div class="demo-points">
+            <span>Попробуй «включи игровой режим»</span>
+            <span>Попроси открыть Steam или Discord</span>
+            <span>Если браузер позволяет — используй микрофон</span>
+          </div>
+        </div>
+
+        <div class="console reveal" aria-label="Интерактивная демонстрация Субботы">
+          <div class="console-top">
+            <div class="console-title"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span> SUNNOHUB / DEMO</div>
+            <span style="color: var(--green)">● На связи</span>
+          </div>
+          <div class="console-body">
+            <div class="console-assistant">
+              <div class="mini-orb" aria-hidden="true"></div>
+              <div><strong>Суббота</strong><small>Твой голосовой помощник</small></div>
+            </div>
+
+            <div class="chat-log" id="chatLog" role="log" aria-live="polite" aria-label="Диалог с Субботой">
+              <div class="message">Привет! Я Суббота. Попробуй написать: «включи игровой режим».</div>
+            </div>
+
+            <div class="apps-label">Приложения в демонстрации</div>
+            <div class="apps" id="apps" aria-label="Состояние приложений">
+              <span class="app-pill" data-app="steam">◈ Steam</span>
+              <span class="app-pill" data-app="music">♫ Музыка</span>
+              <span class="app-pill" data-app="discord">◉ Discord</span>
+              <span class="app-pill" data-app="browser">↗ Браузер</span>
+            </div>
+
+            <div class="quick-actions" aria-label="Примеры команд">
+              <button type="button" data-command="Включи игровой режим">Игровой режим</button>
+              <button type="button" data-command="Включи Стим">Открыть Steam</button>
+              <button type="button" data-command="Включи Дискорд">Открыть Discord</button>
+              <button type="button" data-command="Включи режим работы">Режим работы</button>
+            </div>
+
+            <form class="command-form" id="commandForm">
+              <input id="commandInput" type="text" maxlength="120" autocomplete="off" aria-label="Команда для Субботы" placeholder="Напиши команду Субботе..." required>
+              <button class="icon-button" id="micButton" type="button" aria-label="Произнести команду" title="Произнести команду">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+                  <path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"></path>
+                </svg>
+              </button>
+              <button class="send-button" type="submit" aria-label="Отправить команду" title="Отправить команду">➜</button>
+            </form>
+            <p class="demo-disclaimer" id="demoStatus" role="status">Это демонстрация интерфейса: программы на вашем устройстве не запускаются.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="how" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-kicker">03 / Идея</span>
+          <h2 id="how-title">От мысли до действия —<br><span class="gradient-text">одна команда.</span></h2>
+          <p>Например, ты собираешься играть. Вместо нескольких отдельных запусков просто просишь Субботу подготовить всё.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step reveal">
+            <span class="step-number">01 — СКАЖИ</span>
+            <div class="step-line"></div>
+            <h3>«Включи игровой режим»</h3>
+            <p>Обращаешься к помощнику привычными словами.</p>
+          </div>
+          <div class="step reveal">
+            <span class="step-number">02 — СЦЕНАРИЙ</span>
+            <div class="step-line"></div>
+            <h3>Суббота понимает задачу</h3>
+            <p>Одна команда объединяет нужные тебе действия.</p>
+          </div>
+          <div class="step reveal">
+            <span class="step-number">03 — ГОТОВО</span>
+            <div class="step-line"></div>
+            <h3>Время для своего</h3>
+            <p>Steam, музыка и Discord — пример игрового сценария.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="beta" aria-labelledby="beta-title">
+      <div class="container">
+        <div class="beta-wrap reveal">
+          <div class="beta-content">
+            <span class="section-kicker">Следующий этап / Бета</span>
+            <h2 id="beta-title">Будущее уже<br><span class="gradient-text">на подходе.</span></h2>
+            <p>SunnoHub готовится к бета-запуску. Мы покажем первые возможности Субботы и продолжим улучшать продукт. Дата выхода и условия участия будут объявлены позже.</p>
+            <div class="beta-badge"><span class="live-dot" aria-hidden="true"></span> SunnoHub Beta · скоро</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-kicker">04 / Вопросы</span>
+          <h2 id="faq-title">Коротко о <span class="gradient-text">главном.</span></h2>
+        </div>
+        <div class="faq reveal">
+          <details>
+            <summary>Что такое SunnoHub?</summary>
+            <p>Это новый продукт WeLL с голосовым помощником Суббота. Идея — помогать управлять действиями на компьютере с помощью команд и сценариев.</p>
+          </details>
+          <details>
+            <summary>Когда выйдет бета?</summary>
+            <p>Бета готовится к выходу. Точная дата пока не объявлена — мы не хотим обещать срок до того, как будем готовы его подтвердить.</p>
+          </details>
+          <details>
+            <summary>Можно ли прямо сейчас скачать приложение?</summary>
+            <p>Пока нет. На этой странице можно познакомиться с идеей продукта и попробовать демонстрацию интерфейса.</p>
+          </details>
+          <details>
+            <summary>Демо на сайте действительно запускает программы?</summary>
+            <p>Нет. Это интерактивный пример работы команд. Браузерная страница не открывает Steam, Discord или другие приложения на твоём ПК.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">WeLL<span>.</span> / SunnoHub</div>
+        <div class="footer-small">© <span id="year"></span> WeLL. Сделано с мыслями о будущем.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#top">Наверх ↑</a>
+        <a href="#features">Возможности</a>
+        <a href="#beta">Бета</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const chatLog = document.getElementById("chatLog");
+      const form = document.getElementById("commandForm");
+      const input = document.getElementById("commandInput");
+      const apps = document.querySelectorAll("[data-app]");
+      const status = document.getElementById("demoStatus");
+      const micButton = document.getElementById("micButton");
+      const activeApps = new Set();
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      function addMessage(text, isUser = false) {
+        const message = document.createElement("div");
+        message.className = "message" + (isUser ? " user" : "");
+        message.textContent = text;
+        chatLog.appendChild(message);
+
+        while (chatLog.children.length > 16) {
+          chatLog.firstElementChild.remove();
+        }
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function updateApps() {
+        apps.forEach(app => {
+          app.classList.toggle("active", activeApps.has(app.dataset.app));
+        });
+      }
+
+      function activate(...names) {
+        names.forEach(name => activeApps.add(name));
+        updateApps();
+      }
+
+      function respond(rawCommand) {
+        const command = rawCommand.trim();
+        if (!command) return;
+
+        addMessage(command, true);
+        input.value = "";
+
+        const text = command.toLocaleLowerCase("ru-RU").replace(/ё/g, "е");
+        let reply;
+
+        if (/(выключи|отключи|останови|закрой|сбрось)/.test(text) && /(режим|все|приложени)/.test(text)) {
+          activeApps.clear();
+          updateApps();
+          reply = "Сценарий остановлен. В демо я сбросила подсветку приложений.";
+        } else if (/(игров|поиграт|для игры)/.test(text)) {
+          activeApps.clear();
+          activate("steam", "music", "discord");
+          reply = "Игровой режим готов: Steam, музыка и Discord отмечены как запущенные. Приятной игры!";
+        } else if (/(работ|сосредоточ|фокус)/.test(text)) {
+          activeApps.clear();
+          activate("browser");
+          reply = "Переключаюсь на рабочий сценарий. В демо подготовлен браузер — можно сосредоточиться на задачах.";
+        } else if (/(стим|steam)/.test(text)) {
+          activate("steam");
+          reply = "Steam отмечен как запущенный. Самое время выбрать игру!";
+        } else if (/(дискорд|discord)/.test(text)) {
+          activate("discord");
+          reply = "Discord отмечен как запущенный. Друзья уже ждут?";
+        } else if (/(музык|трек|плейлист)/.test(text)) {
+          activate("music");
+          reply = "Музыка отмечена как включённая. Лови настроение!";
+        } else if (/(браузер|интернет|сайт)/.test(text)) {
+          activate("browser");
+          reply = "Браузер отмечен как открытый.";
+        } else if (/(привет|здравствуй|как дела)/.test(text)) {
+          reply = "Привет! Я Суббота. Попробуй команду «включи игровой режим».";
+        } else {
+          reply = "Пока это демо, поэтому я понимаю только несколько примеров: игровой режим, режим работы, Steam, Discord, музыку и браузер.";
+        }
+
+        window.setTimeout(() => addMessage(reply), 260);
+      }
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        respond(input.value);
+      });
+
+      document.querySelectorAll("[data-command]").forEach(button => {
+        button.addEventListener("click", () => respond(button.dataset.command));
+      });
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognition;
+      let listening = false;
+
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = "ru-RU";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          listening = true;
+          micButton.classList.add("listening");
+          micButton.setAttribute("aria-label", "Остановить запись");
+          status.textContent = "Слушаю... Произнеси команду.";
+        };
+
+        recognition.onresult = event => {
+          const transcript = event.results[0][0].transcript;
+          respond(transcript);
+          status.textContent = "Команда распознана. Это демо: программы на устройстве не запускаются.";
+        };
+
+        recognition.onerror = event => {
+          status.textContent = event.error === "not-allowed"
+            ? "Нет доступа к микрофону. Разреши доступ в браузере или введи команду текстом."
+            : "Не удалось распознать речь. Попробуй ещё раз или введи команду текстом.";
+        };
+
+        recognition.onend = () => {
+          listening = false;
+          micButton.classList.remove("listening");
+          micButton.setAttribute("aria-label", "Произнести команду");
+          if (status.textContent === "Слушаю... Произнеси команду.") {
+            status.textContent = "Прослушивание остановлено. Это демо: программы не запускаются.";
+          }
+        };
+      }
+
+      micButton.addEventListener("click", () => {
+        if (!recognition) {
+          status.textContent = "Этот браузер не поддерживает распознавание речи. Введи команду текстом.";
+          return;
+        }
+
+ 
